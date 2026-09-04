@@ -1,0 +1,19 @@
+# Schlüssel und lokale Umgebung — nie ins öffentliche Repo
+.env
+.env.*
+*.key
+secrets/
+
+# Abhängigkeiten / Build
+node_modules/
+dist/
+build/
+.cache/
+.vite/
+
+# Editor / Betriebssystem
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+*.swp
