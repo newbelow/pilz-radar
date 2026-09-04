@@ -20,3 +20,4 @@ desktop.ini
 
 # Auswertungen mit Fundorten
 werkzeug/*.json
+werkzeug/sichtung-lokal.md
