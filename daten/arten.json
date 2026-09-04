@@ -1,0 +1,38 @@
+{
+  "_hinweis": "Artenstammdaten. Die Felder unter 'regel' sind BEWUSST LEER - sie werden aus Andrejs eigenen Funden und aus noch zu holender Fachliteratur gefuellt, nicht geraten.",
+  "arten": [
+    {
+      "id": "steinpilz",
+      "name": "Steinpilz",
+      "wissenschaftlich": "Boletus edulis",
+      "rolle": "speisepilz",
+      "giftig": false,
+      "saison_monate": [6, 7, 8, 9, 10, 11],
+      "partnerbaeume": ["Fichte", "Kiefer", "Buche", "Eiche"],
+      "mykorrhiza": true,
+      "regel": {
+        "quelle": null,
+        "stand": null,
+        "parameter": {}
+      }
+    },
+    {
+      "id": "fliegenpilz",
+      "name": "Fliegenpilz",
+      "wissenschaftlich": "Amanita muscaria",
+      "rolle": "zeigerpilz",
+      "giftig": true,
+      "warnhinweis": "Giftig. Wird hier ausschliesslich als Indikator gefuehrt, nicht als Sammelziel.",
+      "saison_monate": [7, 8, 9, 10, 11],
+      "partnerbaeume": ["Birke", "Fichte", "Kiefer"],
+      "mykorrhiza": true,
+      "zeigt_an": ["steinpilz"],
+      "zeiger_begruendung": "Teilt Partnerbaeume und Fruktifikationsfenster mit dem Steinpilz; unter Sammlern als Indikator gebraeuchlich. NOCH NICHT an Andrejs Daten geprueft.",
+      "regel": {
+        "quelle": null,
+        "stand": null,
+        "parameter": {}
+      }
+    }
+  ]
+}
