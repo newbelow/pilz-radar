@@ -17,3 +17,6 @@ build/
 Thumbs.db
 desktop.ini
 *.swp
+
+# Auswertungen mit Fundorten
+werkzeug/*.json
