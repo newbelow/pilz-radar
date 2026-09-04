@@ -33,3 +33,17 @@ Schreibt `ausfluege.json` **neben das Skript** — nicht ins Repo committen.
 ⚠️ Cluster-Größe allein ist kein Pilzindiz: Der größte Herbst-Cluster im
 Nahbereich (2019-09-20, 18 Fotos) war eine Fortbildung, abfotografierte
 Vortragsfolien. Es braucht den Blick aufs Bild.
+
+## vorgeschichte.py
+
+Liest die Fotos aus `..\pilz-radar-fotos\{funde,ohne-fund}\`, holt zu jedem
+Tag/Ort die Wetter-Vorgeschichte aus dem Open-Meteo-**Archiv** und rechnet
+Kennzahlen aus: Regensummen (7/14/21/31 Tage), Tage seit dem letzten Starkregen
+(>= 10 mm), Bodentemperatur und -feuchte 0-7 cm am Tag selbst.
+
+```bash
+python werkzeug/vorgeschichte.py
+```
+
+Schreibt `vorgeschichte.json` neben das Skript — enthält Koordinaten, wird
+nicht committet.
