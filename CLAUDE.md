@@ -57,7 +57,9 @@ Tagesreihe über heute + Vorhersage, Detailansicht je Tag mit beiden Werten,
 jedem Fenster, seiner Trapezlage und der gemessenen Trennkraft.
 Gebaut von Litr (ausgeliehen), fertiggestellt und im Browser geprüft.
 
-⚠️ **Noch nicht committet** — Andrej committet selbst.
+✅ **Committet und gepusht (05.09., `e9e7a43`).** 6 Dateien, 2775 Zeilen.
+Identität: die repo-lokale Noreply-Adresse; die globale Gitea-Identität blieb
+unberührt.
 ⚠️ **Start braucht einen lokalen Server** (`python -m http.server`), weil
 `fetch` auf `daten/arten.json` über `file://` blockiert wird. Auf Pages egal.
 ⚠️ **Versionsmarke `?v=N`** in `index.html` bei jeder Änderung an `app.js` oder
