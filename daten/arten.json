@@ -1,5 +1,5 @@
 {
-  "_hinweis": "Artenstammdaten. Die Felder unter 'regel' sind BEWUSST LEER - sie werden aus Andrejs eigenen Funden und aus noch zu holender Fachliteratur gefuellt, nicht geraten.",
+  "_hinweis": "Artenstammdaten und gepruefte Modellparameter. Jeder Wert traegt seine Quelle und sein Pruefergebnis. Keine Zahl ohne Beleg (Regel 4).",
   "arten": [
     {
       "id": "steinpilz",
@@ -7,13 +7,251 @@
       "wissenschaftlich": "Boletus edulis",
       "rolle": "speisepilz",
       "giftig": false,
-      "saison_monate": [6, 7, 8, 9, 10, 11],
-      "partnerbaeume": ["Fichte", "Kiefer", "Buche", "Eiche"],
+      "saison_monate": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "partnerbaeume": [
+        "Fichte",
+        "Kiefer",
+        "Buche",
+        "Eiche"
+      ],
       "mykorrhiza": true,
       "regel": {
-        "quelle": null,
-        "stand": null,
-        "parameter": {}
+        "quelle": "Fachrecherche Andrej 04.09.2026, geprueft gegen eigene Funde",
+        "stand": "2026-09-04",
+        "parameter": {
+          "bodentemperatur_c": {
+            "trapez": [
+              6,
+              12,
+              18,
+              22
+            ],
+            "tiefe": "0-7 cm",
+            "traegt": true,
+            "anteil_fundtage": 0.8,
+            "anteil_saisontage": 0.36,
+            "hebel": 2.22
+          },
+          "lufttemperatur_tag_c": {
+            "trapez": [
+              5,
+              15,
+              22,
+              26
+            ],
+            "feld": "temperature_2m_max",
+            "traegt": true,
+            "anteil_fundtage": 0.8,
+            "anteil_saisontage": 0.39,
+            "hebel": 2.05
+          },
+          "lufttemperatur_nacht_c": {
+            "trapez": [
+              0,
+              8,
+              14,
+              18
+            ],
+            "feld": "temperature_2m_min",
+            "traegt": true,
+            "anteil_fundtage": 0.8,
+            "anteil_saisontage": 0.46,
+            "hebel": 1.74
+          },
+          "regen_15_tage_mm": {
+            "trapez": [
+              5,
+              15,
+              80,
+              120
+            ],
+            "rolle": "kontext",
+            "traegt": false,
+            "anteil_fundtage": 0.9,
+            "anteil_saisontage": 0.79,
+            "hebel": 1.14,
+            "bemerkung": "Zu schwach zum Gewichten - wird angezeigt, geht nicht in den Wert ein."
+          },
+          "regen_latenz_7_14_tage": {
+            "trapez": [
+              15,
+              25,
+              50,
+              80
+            ],
+            "rolle": "nur_spi",
+            "traegt": null,
+            "anteil_fundtage": 0.5,
+            "anteil_saisontage": 0.27,
+            "bemerkung": "Trennt zwar, verfehlt aber die Haelfte der Steinpilz-Fundtage. Geht NUR in den SPI ein, nicht in das Befundmodell."
+          },
+          "relative_luftfeuchte_prozent": {
+            "verworfen": true,
+            "anteil_fundtage": 0.5,
+            "anteil_saisontage": 0.68,
+            "bemerkung": "Trennt negativ. Nicht verwenden."
+          },
+          "wind_kmh": {
+            "verworfen": true,
+            "anteil_fundtage": 0.6,
+            "anteil_saisontage": 0.84,
+            "bemerkung": "Trennt negativ. 12.10.2019 war windig - zwei Funde."
+          },
+          "temperaturimpuls_c": {
+            "verworfen": true,
+            "anteil_fundtage": 0.6,
+            "anteil_saisontage": 0.89,
+            "bemerkung": "Trennt negativ. Operationalisierung grob, nicht widerlegt - aber unbelegt, also draussen."
+          },
+          "bodenfeuchte_0_7cm": {
+            "verworfen": true,
+            "geprueft_als": "Fenster ftrap(x, 0.198, 0.233, 1.0, 1.0) - Untergrenze aus dem trockensten Fund, nach oben offen",
+            "spanne_fundtage": [
+              0.233,
+              0.355
+            ],
+            "wirkung": "Hebel 2.48 -> 2.57 (ganze Saison), 1.51 -> 1.56 (Kernsaison). Rauschen.",
+            "bemerkung": "Andrejs Vorschlag vom 05.09., ausdruecklich als FENSTER geprueft (nicht per Perzentil). Die belegte Untergrenze wird im Herbst fast immer ueberschritten; eine trennende Grenze waere aus denselben 9 Punkten gefischt. Nicht aufgenommen."
+          }
+        },
+        "befundmodell": {
+          "beschreibung": "Der schwaechste der drei Trapezwerte bestimmt das Ergebnis (Minimum, 0-100). KEINE Wahrscheinlichkeit - eine Rechengroesse darueber, wie weit heute das unguenstigste der drei gepruefte Fenster verlassen ist.",
+          "aggregation": "minimum",
+          "begruendung": "Gemessen am 04.09. ueber 854 Saisontage: der zuvor verwendete gewichtete MITTELWERT stand an 40,3 % der Saisontage ueber 90 und hatte Median 80,8 - ein Wert, der sich kaum bewegt, hilft beim Planen nicht. Das MINIMUM hat Median 62,5, steht nur an 30,6 % der Tage ueber 90 und trennt besser (Hebel 2,48 statt 1,89 bei Schwelle 85), ohne Fundtage zu verlieren (88 % in beiden Varianten). Sachlich ist es ausserdem die begruendete Form: ein verletztes Fenster wird nicht dadurch gut, dass die anderen passen (Liebigs Minimumgesetz - das die PDF-Vorlage behauptet, aber nicht umsetzt).",
+          "verworfen_mittelwert": {
+            "median": 80.8,
+            "anteil_ueber_90": 0.403,
+            "hebel_85": 1.89
+          },
+          "gemessen_minimum": {
+            "median": 62.5,
+            "anteil_ueber_90": 0.306,
+            "hebel_85": 2.48,
+            "anteil_fundtage_ueber_85": 0.88
+          },
+          "regen_nicht_aufgenommen": "Auch als vierte Groesse im Minimum geprueft und verworfen: die Trefferquote auf den eigenen Fundtagen faellt von 88 % auf 62 %, weil der 04.08.2023 mit 114 mm in 15 Tagen ueber die Obergrenze rutscht.",
+          "haeufigkeit": {
+            "beschreibung": "Wie haeufig ein Wert dieser Hoehe in der Saison ueberhaupt vorkommt. Damit laesst sich eine 100 einordnen, statt sie fuer selten zu halten. ACHTUNG: Das ist eine Einordnung des fertigen Index (monoton, hoeher = guenstiger nach Modell) - NICHT die verworfene Perzentil-Messung von Einzelgroessen, die an Optimalfenstern scheitert.",
+            "grundlage": "854 Saisontage (Aug-Nov 2019-2025) am Revierpunkt Ostwestfalen",
+            "median": 62.5,
+            "stufen": [
+              {
+                "wert": 0,
+                "anteil_mindestens": 1.0
+              },
+              {
+                "wert": 5,
+                "anteil_mindestens": 0.781
+              },
+              {
+                "wert": 10,
+                "anteil_mindestens": 0.76
+              },
+              {
+                "wert": 15,
+                "anteil_mindestens": 0.734
+              },
+              {
+                "wert": 20,
+                "anteil_mindestens": 0.714
+              },
+              {
+                "wert": 25,
+                "anteil_mindestens": 0.699
+              },
+              {
+                "wert": 30,
+                "anteil_mindestens": 0.683
+              },
+              {
+                "wert": 35,
+                "anteil_mindestens": 0.665
+              },
+              {
+                "wert": 40,
+                "anteil_mindestens": 0.638
+              },
+              {
+                "wert": 45,
+                "anteil_mindestens": 0.614
+              },
+              {
+                "wert": 50,
+                "anteil_mindestens": 0.587
+              },
+              {
+                "wert": 55,
+                "anteil_mindestens": 0.553
+              },
+              {
+                "wert": 60,
+                "anteil_mindestens": 0.52
+              },
+              {
+                "wert": 65,
+                "anteil_mindestens": 0.485
+              },
+              {
+                "wert": 70,
+                "anteil_mindestens": 0.459
+              },
+              {
+                "wert": 75,
+                "anteil_mindestens": 0.426
+              },
+              {
+                "wert": 80,
+                "anteil_mindestens": 0.395
+              },
+              {
+                "wert": 85,
+                "anteil_mindestens": 0.359
+              },
+              {
+                "wert": 90,
+                "anteil_mindestens": 0.306
+              },
+              {
+                "wert": 95,
+                "anteil_mindestens": 0.266
+              },
+              {
+                "wert": 100,
+                "anteil_mindestens": 0.225
+              }
+            ],
+            "je_monat": {
+              "8": {
+                "median": 17.5,
+                "anteil_100": 0.097,
+                "name": "August"
+              },
+              "9": {
+                "median": 89.0,
+                "anteil_100": 0.39,
+                "name": "September"
+              },
+              "10": {
+                "median": 91.0,
+                "anteil_100": 0.382,
+                "name": "Oktober"
+              },
+              "11": {
+                "median": 23.3,
+                "anteil_100": 0.029,
+                "name": "November"
+              }
+            },
+            "befund": "Wert B trennt vor allem SAISONPHASEN, kaum Tage innerhalb der Kernsaison: im September und Oktober steht er an rund 39 % der Tage auf 100. Das ist keine Anzeigeschwaeche, sondern die Aussagegrenze dreier Temperaturfenster - im Herbst stimmt die Temperatur eben meistens."
+          }
+        }
       }
     },
     {
@@ -23,16 +261,68 @@
       "rolle": "zeigerpilz",
       "giftig": true,
       "warnhinweis": "Giftig. Wird hier ausschliesslich als Indikator gefuehrt, nicht als Sammelziel.",
-      "saison_monate": [7, 8, 9, 10, 11],
-      "partnerbaeume": ["Birke", "Fichte", "Kiefer"],
+      "saison_monate": [
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "partnerbaeume": [
+        "Birke",
+        "Fichte",
+        "Kiefer"
+      ],
       "mykorrhiza": true,
-      "zeigt_an": ["steinpilz"],
+      "zeigt_an": [
+        "steinpilz"
+      ],
       "zeiger_begruendung": "Teilt Partnerbaeume und Fruktifikationsfenster mit dem Steinpilz; unter Sammlern als Indikator gebraeuchlich. NOCH NICHT an Andrejs Daten geprueft.",
       "regel": {
         "quelle": null,
         "stand": null,
-        "parameter": {}
+        "parameter": {},
+        "bemerkung": "Leer und bleibt leer: 3 Fliegenpilz-Tage, 2 mit Koordinate. Zu wenig zum Pruefen."
+      }
+    },
+    {
+      "id": "marone",
+      "name": "Marone",
+      "wissenschaftlich": "Imleria badia",
+      "rolle": "speisepilz",
+      "giftig": false,
+      "saison_monate": [
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "partnerbaeume": [
+        "Fichte",
+        "Kiefer",
+        "Buche"
+      ],
+      "mykorrhiza": true,
+      "regel": {
+        "quelle": null,
+        "stand": null,
+        "parameter": {},
+        "bemerkung": "Leer: genau 1 Fundtag (19.10.2024). Aufgenommen, damit dieser Tag nicht faelschlich als Steinpilz-Beleg gezaehlt wird - er war der einzige Fundtag, den der reparierte SPI hoch bewertete."
       }
     }
-  ]
+  ],
+  "_geprueft": {
+    "stand": "2026-09-04 (Artzuordnung nachgetragen)",
+    "grundlage": "9 verschiedene Steinpilz-Fundtage (10 Tag/Ort-Eintraege) 2019-2024 an ihren eigenen Koordinaten gegen 854 Saisontage (Aug-Nov 2019-2025) am Revierpunkt Ostwestfalen. Fliegenpilz- und Marone-Tage sind ausgeschlossen.",
+    "vorbehalt": "Kleine Stichprobe, keine Nullfund-Tage. Die Anteile sagen, wie oft ein Kriterium an Fundtagen bzw. an beliebigen Saisontagen erfuellt war - keine Wahrscheinlichkeit.",
+    "trapezform": "ftrap(x,a,b,c,d): 0 ausserhalb [a,d], 1 auf [b,c], linear dazwischen. Uebernommen aus steinpilz_radar_berechnungsformel.pdf (Formel 2).",
+    "aenderung": "Andrej hat am 04.09. die 5 zuvor unbestimmten Roehrlinge zugeordnet. Vier sind Steinpilze, einer (19.10.2024) ist eine Marone und faellt aus der Steinpilz-Kalibrierung heraus. Die Temperaturfenster halten das aus, der SPI verliert dadurch.",
+    "fallzahlen": {
+      "steinpilz_tage": 9,
+      "steinpilz_eintraege": 10,
+      "saisontage": 854,
+      "hinweis": "Von der Seite als Fallzahl angezeigt - nicht im Code wiederholen."
+    }
+  }
 }

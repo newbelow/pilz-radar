@@ -1,0 +1,454 @@
+/* pilz-radar — Gestaltung. Dunkel als Grundzustand (geplant wird abends),
+   hell nur, wenn das System es ausdrücklich verlangt. Keine Bibliothek,
+   keine Schriftdatei von außen. */
+
+:root {
+  --grund:      #14171a;
+  --tafel:      #1c2024;
+  --tafel-rand: #2c3238;
+  --erhoben:    #232930;
+  --text:       #e6e9ec;
+  --text-leise: #9aa4ae;
+  --text-still: #74808b;
+  --akzent:     #7fb069;   /* ein Grün, für beide Werte dasselbe */
+  --akzent-matt:#3d5236;
+  --warnung:    #d99a4e;
+  --fehler:     #d9705e;
+  --radius: 10px;
+  --schrift: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --grund:      #f4f2ee;
+    --tafel:      #ffffff;
+    --tafel-rand: #dcd8d0;
+    --erhoben:    #f7f5f1;
+    --text:       #1e2226;
+    --text-leise: #5c6570;
+    --text-still: #7c8590;
+    --akzent:     #4f7a3a;
+    --akzent-matt:#cfe0c4;
+    --warnung:    #9a6a1e;
+    --fehler:     #a83c28;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
+  max-width: 68rem;
+  background: var(--grund);
+  color: var(--text);
+  font-family: var(--schrift);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-text-size-adjust: 100%;
+}
+
+h1, h2, h3, h4 { line-height: 1.25; margin: 0 0 .4rem; font-weight: 600; }
+h1 { font-size: 1.6rem; letter-spacing: .01em; }
+h2 { font-size: 1.15rem; }
+h3 { font-size: 1rem; }
+h4 { font-size: .92rem; color: var(--text-leise); font-weight: 600; }
+p  { margin: 0 0 .7rem; }
+a  { color: var(--akzent); }
+code { font-size: .88em; background: var(--erhoben); padding: .08em .3em; border-radius: 4px; }
+
+.klein { font-size: .82rem; color: var(--text-leise); }
+
+/* ---------- Kopf und Vorbehalt ---------- */
+
+.kopf { margin-bottom: 1rem; }
+.untertitel { color: var(--text-leise); margin: 0; }
+
+.vorbehalt {
+  border: 1px solid var(--tafel-rand);
+  border-left: 3px solid var(--warnung);
+  background: var(--tafel);
+  border-radius: var(--radius);
+  padding: .8rem 1rem;
+  margin: 0 0 1.2rem;
+  font-size: .9rem;
+  color: var(--text-leise);
+}
+.vorbehalt strong { color: var(--text); }
+
+.hinweis {
+  border: 1px solid var(--fehler);
+  border-radius: var(--radius);
+  padding: .8rem 1rem;
+  margin-bottom: 1.2rem;
+  font-size: .9rem;
+}
+
+/* ---------- Tafeln ---------- */
+
+.tafel {
+  background: var(--tafel);
+  border: 1px solid var(--tafel-rand);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.1rem 1.2rem;
+  margin-bottom: 1.2rem;
+}
+
+.tafel-kopf {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .5rem;
+}
+.tafel-werkzeug { display: flex; align-items: center; gap: .6rem; }
+
+/* ---------- Formular / Stellen ---------- */
+
+#stelle-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  align-items: flex-end;
+  margin: .8rem 0 1rem;
+}
+.feld { display: flex; flex-direction: column; gap: .2rem; }
+.feld label { font-size: .78rem; color: var(--text-leise); }
+.feld:first-child { flex: 1 1 12rem; }
+.feld:not(:first-child) { flex: 0 1 9rem; }
+
+input[type="text"] {
+  background: var(--erhoben);
+  border: 1px solid var(--tafel-rand);
+  border-radius: 7px;
+  color: var(--text);
+  padding: .45rem .6rem;
+  font: inherit;
+  font-size: .92rem;
+  width: 100%;
+}
+input[type="text"]:focus-visible,
+button:focus-visible,
+.tag:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--akzent);
+  outline-offset: 2px;
+}
+
+button {
+  background: var(--erhoben);
+  border: 1px solid var(--tafel-rand);
+  color: var(--text);
+  border-radius: 7px;
+  padding: .45rem .8rem;
+  font: inherit;
+  font-size: .9rem;
+  cursor: pointer;
+}
+button:hover { border-color: var(--akzent); }
+button[type="submit"] { border-color: var(--akzent-matt); }
+
+.fehler { color: var(--fehler); font-size: .85rem; margin: .2rem 0 0; }
+
+.stellen { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .5rem; }
+.stellen li { display: flex; }
+
+.stelle-knopf {
+  display: flex;
+  align-items: baseline;
+  gap: .5rem;
+  border-radius: 7px 0 0 7px;
+  border-right: none;
+}
+.stelle-knopf[aria-pressed="true"] {
+  border-color: var(--akzent);
+  background: var(--akzent-matt);
+}
+.stelle-name { font-weight: 600; }
+.stelle-ort { font-size: .78rem; color: var(--text-leise); font-variant-numeric: tabular-nums; }
+.stelle-loeschen { border-radius: 0 7px 7px 0; color: var(--text-still); padding-inline: .55rem; }
+.stelle-loeschen:hover { color: var(--fehler); border-color: var(--fehler); }
+
+.leerzustand {
+  border: 1px dashed var(--tafel-rand);
+  border-radius: var(--radius);
+  padding: 1rem;
+  color: var(--text-leise);
+  font-size: .9rem;
+}
+.leerzustand strong { color: var(--text); }
+
+/* ---------- Tagesreihe ---------- */
+
+.legende { font-size: .84rem; color: var(--text-leise); margin: .6rem 0 .9rem; }
+.legende-marke {
+  font-size: .74rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text);
+  border: 1px solid var(--tafel-rand);
+  border-radius: 4px;
+  padding: 0 .3em;
+}
+
+.reihe {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(6.6rem, 1fr);
+  gap: .5rem;
+  overflow-x: auto;
+  padding-bottom: .4rem;
+}
+
+.tag {
+  display: block;
+  text-align: left;
+  background: var(--erhoben);
+  border: 1px solid var(--tafel-rand);
+  border-radius: 9px;
+  padding: .5rem .55rem .6rem;
+  cursor: pointer;
+}
+.tag[aria-pressed="true"] { border-color: var(--akzent); }
+.tag.heute .tag-datum::after {
+  content: " heute";
+  color: var(--akzent);
+  font-weight: 600;
+}
+.tag-wochentag { display: block; font-size: .78rem; color: var(--text-leise); }
+.tag-datum { display: block; font-size: .8rem; color: var(--text-still); font-variant-numeric: tabular-nums; margin-bottom: .35rem; }
+
+/* Beide Werte identisch gebaut und identisch groß — keiner ist der Hauptwert. */
+.paar { display: grid; grid-template-columns: 1fr 1fr; gap: .35rem; }
+.wert { min-width: 0; }
+.wert-marke {
+  display: block;
+  font-size: .62rem;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--text-still);
+}
+.wert-zahl {
+  display: block;
+  font-size: 1.18rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.wert-zahl.unbekannt { font-size: .76rem; font-weight: 400; color: var(--text-still); }
+.balken {
+  display: block;
+  height: 4px;
+  background: var(--tafel-rand);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: .25rem;
+}
+.balken i { display: block; height: 100%; background: var(--akzent); }
+
+/* ---------- Detailansicht ---------- */
+
+.detail-spalten {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+.block {
+  border: 1px solid var(--tafel-rand);
+  border-radius: 9px;
+  padding: .9rem;
+  background: var(--erhoben);
+}
+.block-kopf { display: flex; align-items: baseline; justify-content: space-between; gap: .6rem; }
+.block-zahl { font-size: 1.7rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.block-zahl.unbekannt { font-size: 1rem; font-weight: 400; color: var(--text-still); }
+.block-quelle { font-size: .8rem; color: var(--text-leise); margin: .1rem 0 .8rem; }
+.block-summe {
+  font-size: .82rem;
+  color: var(--text-leise);
+  font-variant-numeric: tabular-nums;
+  border-top: 1px solid var(--tafel-rand);
+  padding-top: .55rem;
+  margin-top: .3rem;
+}
+.block-note { font-size: .8rem; color: var(--text-leise); margin-top: .6rem; }
+
+.kriterium { padding: .55rem 0; border-top: 1px solid var(--tafel-rand); }
+.kriterium:first-of-type { border-top: none; }
+.kriterium-kopf { display: flex; justify-content: space-between; align-items: baseline; gap: .5rem; }
+.kriterium-name { font-size: .88rem; font-weight: 600; }
+.kriterium-ist { font-size: .88rem; font-variant-numeric: tabular-nums; }
+.kriterium-ist.unbekannt { color: var(--text-still); font-size: .8rem; }
+.kriterium-lage { font-size: .78rem; color: var(--text-leise); font-variant-numeric: tabular-nums; }
+.kriterium-trenn { font-size: .76rem; color: var(--text-still); }
+.kriterium.kontext { opacity: .8; }
+
+.trapez { display: block; width: 100%; height: 34px; margin: .3rem 0 .1rem; }
+.trapez .flaeche { fill: var(--akzent-matt); stroke: var(--akzent); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.trapez .marke { stroke: var(--text); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.trapez .marke.aussen { stroke: var(--fehler); stroke-dasharray: 3 3; }
+.skala {
+  display: flex;
+  justify-content: space-between;
+  font-size: .7rem;
+  color: var(--text-still);
+  font-variant-numeric: tabular-nums;
+}
+
+.zeile { display: flex; justify-content: space-between; gap: .6rem; font-size: .84rem; padding: .18rem 0; }
+.zeile-wert { font-variant-numeric: tabular-nums; }
+.zeile-wert.unbekannt { color: var(--text-still); }
+.zeile.summe { border-top: 1px solid var(--tafel-rand); margin-top: .3rem; padding-top: .4rem; font-weight: 600; }
+.gruppe { margin: .6rem 0; }
+.gruppe > h4 { margin-bottom: .1rem; }
+
+/* ---------- Begründung ---------- */
+
+details {
+  border-top: 1px solid var(--tafel-rand);
+  padding: .5rem 0;
+}
+details:first-of-type { border-top: none; }
+summary { cursor: pointer; font-weight: 600; font-size: .95rem; }
+details[open] > summary { margin-bottom: .5rem; }
+details p, details li { font-size: .88rem; color: var(--text-leise); }
+details strong, details em { color: var(--text); }
+details ul, details ol { margin: 0 0 .6rem; padding-left: 1.2rem; }
+details li { margin-bottom: .35rem; }
+
+.fuss {
+  color: var(--text-still);
+  font-size: .8rem;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+@media (max-width: 34rem) {
+  body { padding: 1rem .7rem 3rem; }
+  .tafel { padding: .9rem .8rem 1rem; }
+  .feld:not(:first-child) { flex: 1 1 7rem; }
+}
+
+/* ---------------------------------------------------------------- *
+ * Gangprotokoll
+ * ---------------------------------------------------------------- */
+
+#gang-form { margin: .8rem 0 1rem; }
+
+.feldreihe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  align-items: flex-end;
+  margin-bottom: .6rem;
+}
+/* Die globalen .feld-Regeln greifen nach Position - hier zaehlt der Zweck. */
+.feldreihe .feld,
+.feldreihe .feld:first-child,
+.feldreihe .feld:not(:first-child) { flex: 0 1 10rem; }
+.feldreihe .feld-breit { flex: 1 1 14rem; }
+.feldreihe .feld-schmal { flex: 0 1 7rem; }
+.feld-voll { margin-bottom: .6rem; }
+
+input[type="date"],
+input[type="number"],
+select {
+  background: var(--erhoben);
+  border: 1px solid var(--tafel-rand);
+  border-radius: 7px;
+  color: var(--text);
+  padding: .45rem .6rem;
+  font: inherit;
+  font-size: .92rem;
+  width: 100%;
+}
+input[type="date"]:focus-visible,
+input[type="number"]:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--akzent);
+  outline-offset: 2px;
+}
+
+fieldset.ergebnis {
+  border: 1px solid var(--tafel-rand);
+  border-radius: 7px;
+  padding: .4rem .8rem .6rem;
+  margin: 0 0 .7rem;
+  display: flex;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+}
+fieldset.ergebnis legend {
+  font-size: .78rem;
+  color: var(--text-leise);
+  padding: 0 .3rem;
+}
+label.radio {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  cursor: pointer;
+  font-size: .92rem;
+}
+label.radio input { margin: 0; accent-color: var(--akzent); }
+
+.knopfreihe { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
+.knopfreihe-daten {
+  margin-top: 1rem;
+  padding-top: .9rem;
+  border-top: 1px solid var(--tafel-rand);
+}
+
+table.gaenge {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin-top: .6rem;
+}
+table.gaenge th {
+  text-align: left;
+  font-weight: 600;
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-still);
+  border-bottom: 1px solid var(--tafel-rand);
+  padding: .35rem .5rem;
+}
+table.gaenge td {
+  padding: .42rem .5rem;
+  border-bottom: 1px solid var(--tafel-rand);
+}
+table.gaenge th.rechts,
+table.gaenge td.rechts { text-align: right; font-variant-numeric: tabular-nums; }
+table.gaenge tr:last-child td { border-bottom: none; }
+
+/* Ein Gang ohne Fund ist kein Misserfolg - er wird nicht blass dargestellt,
+   nur ruhiger als ein Fund. */
+.gang-fund .gang-ergebnis { font-weight: 600; color: var(--akzent); }
+.gang-leerfund .gang-ergebnis { color: var(--text-leise); }
+
+button.weg {
+  border: none;
+  background: none;
+  color: var(--text-still);
+  font-size: 1.05rem;
+  line-height: 1;
+  padding: .15rem .4rem;
+  cursor: pointer;
+  border-radius: 5px;
+}
+button.weg:hover { background: var(--erhoben); color: var(--text); }
+
+.tafel-note { color: var(--text-leise); font-size: .88rem; }
+.tafel-note.warnung { color: var(--warnung); font-size: .84rem; margin-top: .6rem; }
+
+@media (max-width: 560px) {
+  .feldreihe .feld,
+  .feldreihe .feld-breit,
+  .feldreihe .feld-schmal { flex: 1 1 100%; }
+  table.gaenge { font-size: .84rem; }
+  table.gaenge th, table.gaenge td { padding: .35rem .25rem; }
+}

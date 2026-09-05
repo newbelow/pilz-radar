@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<meta name="robots" content="noindex">
+<title>pilz-radar</title>
+<link rel="stylesheet" href="stil.css?v=8">
+</head>
+<body>
+
+<header class="kopf">
+  <h1>pilz-radar</h1>
+  <p class="untertitel">
+    Bedingungen für Steinpilzwachstum an eigenen Stellen — heute und in den
+    kommenden Tagen.
+  </p>
+</header>
+
+<p class="vorbehalt">
+  <strong>Zwei Indizes, keine Wahrscheinlichkeit.</strong>
+  Die Seite zeigt zwei Rechengrößen von 0 bis 100 nebeneinander. Keine von beiden
+  ist „die richtige“, und keine sagt aus, ob etwas steht. Grundlage sind
+  <strong>neun Steinpilz-Fundtage</strong> ohne <strong>Nullfund-Tage</strong> —
+  Tage, an denen nichts stand, sind nirgends erfasst. Kleine Stichprobe.
+  <a href="#begruendung">Ganzen Vorbehalt lesen</a>
+</p>
+
+<div id="hinweis" class="hinweis" hidden></div>
+
+<main>
+
+  <!-- 1 — Stellenverwaltung. Nur localStorage, keine Vorgaben, kein Server. -->
+  <section class="tafel" id="tafel-stellen">
+    <h2>Stellen</h2>
+
+    <form id="stelle-form" autocomplete="off">
+      <div class="feld">
+        <label for="f-name">Name</label>
+        <input id="f-name" type="text" maxlength="40" required spellcheck="false"
+               autocomplete="off" placeholder="frei wählbar">
+      </div>
+      <div class="feld">
+        <label for="f-breite">Breite</label>
+        <input id="f-breite" type="text" inputmode="decimal" required
+               spellcheck="false" autocomplete="off" placeholder="Dezimalgrad">
+      </div>
+      <div class="feld">
+        <label for="f-laenge">Länge</label>
+        <input id="f-laenge" type="text" inputmode="decimal" required
+               spellcheck="false" autocomplete="off" placeholder="Dezimalgrad">
+      </div>
+      <button type="submit">Stelle hinzufügen</button>
+      <p id="form-fehler" class="fehler" hidden></p>
+    </form>
+
+    <ul id="stellen-liste" class="stellen"></ul>
+
+    <div id="stellen-leer" class="leerzustand">
+      <p><strong>Noch keine Stelle angelegt.</strong></p>
+      <p>
+        Trage oben die erste ein: Name frei wählbar, Breite und Länge in
+        Dezimalgrad (Punkt oder Komma als Trennzeichen). Karten-Apps zeigen sie,
+        wenn man lange auf einen Punkt tippt.
+      </p>
+      <p class="klein">
+        Die Angaben bleiben <strong>ausschließlich in diesem Browser</strong>
+        (localStorage). Sie werden nirgends gespeichert außer hier und nur an
+        Open-Meteo gesendet, um das Wetter für den Punkt abzurufen. Wer den
+        Browserspeicher löscht, löscht die Stellen.
+      </p>
+    </div>
+  </section>
+
+  <!-- 2 — Tagesreihe für die aktive Stelle -->
+  <section class="tafel" id="tafel-reihe" hidden>
+    <div class="tafel-kopf">
+      <h2>Tagesreihe — <span id="reihe-stelle"></span></h2>
+      <div class="tafel-werkzeug">
+        <span id="abrufstand" class="klein"></span>
+        <button type="button" id="neu-laden">Neu laden</button>
+      </div>
+    </div>
+
+    <p class="legende">
+      Je Tag zwei gleichrangige Indizes 0–100:
+      <span class="legende-marke">SPI</span> (repariert, aus der PDF-Vorlage) und
+      <span class="legende-marke">Befund</span> (aus den geprüften Fenstern).
+      Dass sie auseinanderlaufen, ist gewollt und selbst eine Information.
+    </p>
+
+    <div id="reihe" class="reihe"></div>
+    <p id="reihe-status" class="fehler" hidden></p>
+  </section>
+
+  <!-- 3 — Detailansicht des gewählten Tages -->
+  <section class="tafel" id="tafel-detail" hidden>
+    <h2 id="detail-titel">Detail</h2>
+    <div id="detail" class="detail-spalten"></div>
+  </section>
+
+  <!-- 4 — Begründung, aufklappbar, aber nicht kleingedruckt -->
+  <!-- Gangprotokoll: Fund- UND Nullfundtage. Die Nullfunde sind der Grund,
+       warum es diesen Abschnitt gibt - ohne sie misst der Vergleich mit, wann
+       jemand ueberhaupt rausgeht. -->
+  <section class="tafel" id="tafel-protokoll">
+    <h2>Gangprotokoll</h2>
+    <p class="tafel-note">
+      Jeder Waldgang zählt — <strong>gerade die ohne Fund</strong>. Sie sind das,
+      woran beide Modelle bisher scheitern: Ohne sie lässt sich nicht trennen, ob
+      ein Tag günstig war oder ob nur jemand unterwegs war. Die Einträge bleiben
+      in diesem Browser; über <em>Sichern</em> holst du sie als Datei heraus.
+    </p>
+
+    <form id="gang-form" autocomplete="off">
+      <div class="feldreihe">
+        <div class="feld">
+          <label for="g-datum">Datum</label>
+          <input id="g-datum" type="date" required>
+        </div>
+        <div class="feld feld-breit">
+          <label for="g-stelle">Stelle</label>
+          <select id="g-stelle" required></select>
+        </div>
+      </div>
+
+      <fieldset class="ergebnis">
+        <legend>Ergebnis</legend>
+        <label class="radio">
+          <input type="radio" name="g-ergebnis" value="kein_fund" checked>
+          <span>kein Fund</span>
+        </label>
+        <label class="radio">
+          <input type="radio" name="g-ergebnis" value="fund">
+          <span>gefunden</span>
+        </label>
+      </fieldset>
+
+      <div class="feldreihe" id="g-fundfelder" hidden>
+        <div class="feld">
+          <label for="g-art">Art</label>
+          <select id="g-art">
+            <option value="steinpilz">Steinpilz</option>
+            <option value="fliegenpilz">Fliegenpilz</option>
+            <option value="marone">Marone</option>
+            <option value="andere">andere / unklar</option>
+          </select>
+        </div>
+        <div class="feld feld-schmal">
+          <label for="g-anzahl">Anzahl (optional)</label>
+          <input id="g-anzahl" type="number" min="1" max="999" inputmode="numeric">
+        </div>
+      </div>
+
+      <div class="feld feld-voll">
+        <label for="g-notiz">Notiz (optional)</label>
+        <input id="g-notiz" type="text" maxlength="120" spellcheck="false"
+               autocomplete="off" placeholder="z. B. nur Fliegenpilze gesehen, Boden staubtrocken">
+      </div>
+
+      <p id="gang-fehler" class="fehler" hidden></p>
+      <div class="knopfreihe">
+        <button type="submit">Gang eintragen</button>
+      </div>
+    </form>
+
+    <div id="gang-leer" class="leerzustand">
+      <p><strong>Noch kein Gang eingetragen.</strong></p>
+      <p class="klein">
+        Ein Tag ohne Fund ist hier so viel wert wie einer mit — nach einer Saison
+        lässt sich damit prüfen, ob die angezeigten Werte überhaupt etwas taugen.
+      </p>
+    </div>
+
+    <table id="gang-tabelle" class="gaenge" hidden>
+      <thead>
+        <tr><th>Datum</th><th>Stelle</th><th>Ergebnis</th>
+            <th class="rechts">SPI</th><th class="rechts">Befund</th><th></th></tr>
+      </thead>
+      <tbody id="gang-liste"></tbody>
+    </table>
+
+    <div class="knopfreihe knopfreihe-daten">
+      <button type="button" id="gang-sichern">Sichern (Datei)</button>
+      <button type="button" id="gang-holen">Aus Datei laden</button>
+      <input id="gang-datei" type="file" accept="application/json,.json" hidden>
+      <span id="gang-datenstand" class="klein"></span>
+    </div>
+    <p class="tafel-note warnung">
+      ⚠️ Die gesicherte Datei enthält <strong>deine Koordinaten</strong>. Sie gehört
+      nicht ins Repo und nicht auf GitHub — sie ist für dich und für die
+      Auswertung gedacht.
+    </p>
+  </section>
+
+  <section class="tafel" id="begruendung">
+    <h2>Begründung und Vorbehalt</h2>
+
+    <details open>
+      <summary>Was hier gerechnet wird</summary>
+      <p>
+        Zwei Modelle, nebeneinander, gleich groß dargestellt. Beide liefern eine
+        Zahl von 0 bis 100. Diese Zahl ist ein <strong>Index</strong>: eine
+        Rechengröße aus Wetterdaten, keine Aussage darüber, wie oft an so einem
+        Tag etwas steht. Es gibt für die Fruktifikation von Mykorrhizapilzen kein
+        validiertes Vorhersagemodell; eine kalibrierte Aussage wäre hier nicht
+        möglich und wird deshalb auch nicht behauptet.
+      </p>
+      <p>
+        Beide Werte werden für jeden Tag getrennt gerechnet und nirgends zu einer
+        Gesamtzahl verschmolzen. Wenn sie auseinanderlaufen, ist das der
+        interessante Fall — an weiteren Funden wird sich zeigen, welches Modell
+        trägt.
+      </p>
+    </details>
+
+    <details open>
+      <summary>Der Vorbehalt im Klartext</summary>
+      <ul>
+        <li>
+          <strong>Neun Fundtage.</strong> Die geprüften Anteile stammen aus
+          <strong>neun Steinpilz-Fundtagen</strong> (zehn Tag-Ort-Einträge)
+          2019–2024 an ihren eigenen Koordinaten, verglichen mit 854 Saisontagen
+          (August bis November 2019–2025) am Revierpunkt Ostwestfalen. Das ist
+          eine <strong>kleine Stichprobe</strong>. Fliegenpilz- und Maronen-Funde
+          sind ausgeschlossen — gerechnet wird nur der Steinpilz.
+        </li>
+        <li>
+          <strong>Keine Nullfund-Tage.</strong> Es ist nirgends erfasst, an
+          welchen Tagen nichts stand. Der Vergleich „Fundtage gegen alle
+          Saisontage“ misst deshalb teilweise mit, <em>wann jemand überhaupt
+          rausgegangen ist</em> — nicht nur, wann etwas wuchs. Diese Verzerrung
+          lässt sich mit den vorhandenen Daten nicht auflösen.
+        </li>
+        <li>
+          <strong>Überanpassung.</strong> Für die Auswahl der Kriterien wurden
+          viele Varianten durchprobiert. Bei neun Fundtagen findet man immer etwas.
+          Belastbar ist der Teil, der <em>vorher</em> aus der Fachliteratur kam
+          (die drei Temperaturfenster), nicht der bestsortierte Ausschnitt.
+        </li>
+        <li>
+          <strong>Der Ort zählt.</strong> Am selben Stichtag unterschied sich die
+          Bodenfeuchte zwischen einer bekannten Stelle und einem willkürlichen
+          Punkt im selben Revier um mehr als das Doppelte. Ein Index für einen
+          Kartenpunkt ersetzt die Stelle nicht.
+        </li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>Wert A — SPI (repariert)</summary>
+      <p>
+        Aus <code>steinpilz_radar_berechnungsformel.pdf</code> („Version 1.0“).
+        Vier multiplikativ verknüpfte Teilscores. <strong>Zwei Fehler der
+        Vorlage sind hier korrigiert</strong>, beide gemessen belegt:
+      </p>
+      <ol>
+        <li>
+          <strong>Vorregen als Summe, nicht als Mittel.</strong> Die Vorlage
+          normiert die Gauß-Gewichte auf Summe 1 und macht damit aus der
+          Fenstersumme ein Tagesmittel. Die Schwellen (15 / 25–50 / 80 mm) sind
+          aber Summenwerte über mehrere Tage. Wörtlich implementiert erreicht der
+          SPI dadurch nie mehr als 30 — kein einziger von 854 Saisontagen und
+          kein einziger der eigenen Fundtage kam über 40. Hier werden die Gewichte
+          <strong>nicht normiert</strong> (Maximum 1,0).
+        </li>
+        <li>
+          <strong>Temperaturabfall zwischen Tagen, nicht Tagesspanne.</strong>
+          Die Vorlage rechnet Tmax − Tmin desselben Tages. Das ist die
+          Tagesspanne, und die ist bei klarem, trockenem Hochdruck am größten —
+          das Kriterium schlägt also genau bei dem Wetter an, das schlecht ist.
+          Hier ist ΔTdrop der Abfall des Tageshöchstwerts <strong>zwischen</strong>
+          Tagen (über 24 oder 48 Stunden), gesucht im Band 7 bis 14 Tage zurück.
+        </li>
+      </ol>
+      <p>
+        Auch repariert bleibt ein Einwand: Die Latenz 7–14 Tage geht multiplikativ
+        und dominant ein. <strong>Die Hälfte der eigenen Steinpilz-Fundtage bewertet der
+        SPI niedrig</strong>, weil an ihnen im Latenzband gar kein passender
+        Vorregen lag. Deshalb steht er hier gleichrangig neben dem zweiten Wert
+        und nicht darüber. Die Klasseneinteilung der Vorlage ist
+        <strong>nicht</strong> übernommen — die Seite zeigt nur die Zahl und ihre
+        Teile.
+      </p>
+    </details>
+
+    <details>
+      <summary>Wert B — Befundmodell</summary>
+      <p>
+        Es zählt das <strong>schwächste</strong> der drei Fenster, die gegen die
+        eigenen Funde tatsächlich getrennt haben — ein verletztes Fenster wird
+        nicht dadurch gut, dass die anderen passen. Die Fenster stammen aus der
+        Fachliteratur, also von <em>vor</em> der Prüfung. Alle Parameter stehen in
+        <code>daten/arten.json</code> und werden von dort gelesen, nicht im Code
+        wiederholt.
+      </p>
+      <p>
+        <strong>Warum das Minimum und nicht der Mittelwert:</strong> gemessen über
+        854 Saisontage stand der zuvor gebaute gewichtete Mittelwert an
+        <strong>40 %</strong> aller Saisontage über 90 — ein Wert, der sich kaum
+        bewegt, hilft beim Planen nicht. Das Minimum steht nur an 31 % der Tage
+        über 90 und trennt besser (Hebel 2,48 statt 1,89), ohne Fundtage zu
+        verlieren.
+      </p>
+      <p>
+        Nicht enthalten: <strong>Regen 15 Tage</strong> (Hebel 1,14 — zu schwach
+        zum Mitrechnen, deshalb nur als Kontext angezeigt; als vierte Größe im
+        Minimum geprüft und verworfen, weil die Trefferquote auf den eigenen
+        Fundtagen dann von 88 % auf 62 % fällt) sowie
+        <strong>Luftfeuchte, Wind und Temperaturimpuls</strong>. Diese drei
+        trennten in der Prüfung <em>negativ</em>: sie waren an Fundtagen seltener
+        erfüllt als an beliebigen Saisontagen. Das heißt nicht, dass sie
+        belanglos sind — die Operationalisierung war grob. Es heißt, dass sie
+        unbelegt sind, und Unbelegtes geht hier nicht in eine Zahl ein.
+      </p>
+      <p>
+        Statt harter Ja/Nein-Fenster wird die Trapezfunktion der PDF-Vorlage
+        benutzt: Ein Tag mit 11,8 °C Bodentemperatur ist nicht „draußen“, er ist
+        „fast drin“. Die Grafiken zeigen den Toleranzbereich, das Optimalplateau
+        und die Lage des Ist-Werts darin.
+      </p>
+    </details>
+
+    <details>
+      <summary>Datenquelle und ihr Haken</summary>
+      <p>
+        <a href="https://open-meteo.com" rel="noopener">Open-Meteo</a>,
+        <code>/v1/forecast</code>, ohne Schlüssel, direkt aus dem Browser. Abruf
+        je Stelle mit 31 Tagen Rückblick (für den Vorregen) und 10 Tagen
+        Vorhersage, Zeitzone Europe/Berlin. Die Antwort liegt bis zu drei Stunden
+        im Browserspeicher, damit ein Seitenwechsel nicht neu lädt.
+      </p>
+      <p>
+        <strong>Der Haken:</strong> Geprüft wurde das Modell auf
+        <code>soil_temperature_0_to_7cm</code> aus der Archiv-API. Die Seite
+        bekommt <code>soil_temperature_6cm</code> aus der Vorhersage-API. Das
+        sind nah beieinander liegende, aber <strong>nicht dieselben</strong>
+        Größen. Die Bodentemperatur trägt 35 % des Befundmodells und 40 % des
+        SPI-Klimateils — die Abweichung schlägt also durch.
+      </p>
+      <p>
+        Weitere Festlegungen, damit aus Stundenwerten Tageswerte werden:
+        <strong>Bodentemperatur</strong> ist der 12-Uhr-Wert,
+        <strong>Luftfeuchte</strong> das Tagesmittel,
+        <strong>Wind</strong> das Tagesmaximum, <strong>Frost</strong> der
+        Tiefstwert der letzten drei Tage. Vorhersagewerte sind Vorhersagen, keine
+        Messungen — je weiter voraus, desto weicher.
+      </p>
+      <p>
+        Fehlt ein Wert in der Antwort, steht <strong>„unbekannt“</strong>, und
+        der betroffene Index wird nicht gerechnet. Es wird nichts geschätzt und
+        nichts ersetzt.
+      </p>
+    </details>
+
+    <details>
+      <summary>Was diese Seite nicht ist</summary>
+      <ul>
+        <li>Kein Bestimmungswerkzeug. Keine Aussage über Essbarkeit — zu keinem Pilz.</li>
+        <li>Keine Wahrscheinlichkeit, keine Quote, keine Klassen wie „gut“ oder „schlecht“.</li>
+        <li>Keine Karte, keine Datenbank, kein Konto. Nichts verlässt den Browser außer dem Wetterabruf.</li>
+        <li>Kein Ersatz für den eigenen Blick auf die Stelle.</li>
+      </ul>
+    </details>
+  </section>
+
+</main>
+
+<footer class="fuss">
+  <p>
+    Wetterdaten: <a href="https://open-meteo.com" rel="noopener">Open-Meteo</a>.
+    Stellen liegen nur in diesem Browser. Kein Bestimmungswerkzeug, keine Aussage
+    über Essbarkeit.
+  </p>
+</footer>
+
+<script src="app.js?v=8"></script>
+</body>
+</html>
